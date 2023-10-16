@@ -14,7 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(398, 324)
+        MainWindow.resize(398, 344)
+        MainWindow.setMinimumSize(QtCore.QSize(398, 344))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.centralwidget)
@@ -36,9 +37,10 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.groupBox_Interface)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 0, 0, 1, 1)
-        self.lineEdit = QtWidgets.QLineEdit(self.groupBox_Interface)
-        self.lineEdit.setObjectName("lineEdit")
-        self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 2)
+        self.lineEdit_PrivateKey = QtWidgets.QLineEdit(self.groupBox_Interface)
+        self.lineEdit_PrivateKey.setText("")
+        self.lineEdit_PrivateKey.setObjectName("lineEdit_PrivateKey")
+        self.gridLayout.addWidget(self.lineEdit_PrivateKey, 0, 1, 1, 2)
         self.label_4 = QtWidgets.QLabel(self.groupBox_Interface)
         self.label_4.setObjectName("label_4")
         self.gridLayout.addWidget(self.label_4, 1, 0, 1, 1)
@@ -83,6 +85,9 @@ class Ui_MainWindow(object):
         self.gridLayout_4.addWidget(self.pushButton, 3, 0, 1, 1)
         self.gridLayout_5.addLayout(self.gridLayout_4, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.statusBar = QtWidgets.QStatusBar(MainWindow)
+        self.statusBar.setObjectName("statusBar")
+        MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
