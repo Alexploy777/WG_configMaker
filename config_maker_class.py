@@ -1,5 +1,7 @@
+import os
 import sys
 from dataclasses import dataclass
+import configparser
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
 
@@ -7,44 +9,46 @@ from PyQt5.QtWidgets import QFileDialog, QApplication
 class ConfigMaker:
     def __init__(self, ui_window):
         self.ui_window = ui_window
-        self.file_name = 'conf.conf'
-
-    # # [Interface]
-    # PrivateKey: str
-    # Address: str
-    # DNS: str
-    # # [Peer]
-    # PublicKey: str
-    # AllowedIPs: str
-    # Endpoint: str
-    #
-    # file_name: str
-
-    # def __post_init__(ui_window, *args, **kwargs):
-    #     ui_window = ui_window
 
 
     def config_maker(self):
-        self.file_name = self.ui_window.lineEdit_config_name.text()
-        self.config = (f'[Interface]\n'
-                  f'PrivateKey = {self.ui_window.PrivateKey}\n'
-                  f'Address = {self.ui_window.Address}\n'
-                  f'DNS = {self.ui_window.DNS}\n'
-                  f'\n'
-                  f'[Peer]\n'
-                  f'PublicKey = {self.ui_window.PublicKey}\n'
-                  f'AllowedIPs = {self.ui_window.AllowedIPs}\n'
-                  f'Endpoint = {self.ui_window.Endpoint}')
-        print(self.config)
-        self.config_to_file()
+        self.config_obj = configparser.ConfigParser()
+        self.file_name = self.ui_window.name_list_dict['Config_name']
+        self.config_obj.add_section('Interface')
+        self.config_obj.set('Interface', 'PrivateKey', self.ui_window.name_list_dict['PrivateKey'])
+        self.config_obj.set('Interface', 'Address', self.ui_window.name_list_dict['Address'])
+        self.config_obj.set('Interface', 'DNS', self.ui_window.name_list_dict['DNS'])
+        self.config_obj.add_section('Peer')
+        self.config_obj.set('Peer', 'PublicKey', self.ui_window.name_list_dict['PublicKey'])
+        self.config_obj.set('Peer', 'AllowedIPs', self.ui_window.name_list_dict['AllowedIPs'])
+        self.config_obj.set('Peer', 'Endpoint', self.ui_window.name_list_dict['Endpoint'])
+        self.config_writer()
 
-    def config_to_file(self):
-
+    def config_writer(self):
         file_name_path, _ = QFileDialog.getSaveFileName(self.ui_window, caption="Сохраняем словарь", directory=self.file_name, filter="конфиг-файл (*.conf)")
         if file_name_path:
             with open(file_name_path, 'w', encoding='utf-8') as f:
-                f.write(self.config)
+                self.config_obj.write(f)
 
+    def config_reader(self):
+        self.config_obj = configparser.ConfigParser()
+        file_name_path, _ = QFileDialog.getOpenFileName(self.ui_window, caption="Открываем конфигурацию", directory= '/', filter="конфиг-файл (*.conf)")
+        file_name = os.path.basename(file_name_path).split('.')[0]
+        print(file_name)
+        try:
+            self.config_obj.read(file_name_path, encoding="utf-8")
+            self.ui_window.lineEdit_Config_name.setText(file_name)
+            self.ui_window.lineEdit_PrivateKey.setText(self.config_obj.get('Interface', 'PrivateKey'))
+            self.ui_window.lineEdit_Address.setText(self.config_obj.get('Interface', 'Address'))
+            self.ui_window.lineEdit_DNS.setText(self.config_obj.get('Interface', 'DNS'))
+            self.ui_window.lineEdit_PublicKey.setText(self.config_obj.get('Peer', 'PublicKey'))
+            self.ui_window.lineEdit_AllowedIPs.setText(self.config_obj.get('Peer', 'AllowedIPs'))
+            self.ui_window.lineEdit_Endpoint.setText(self.config_obj.get('Peer', 'Endpoint'))
+        except:
+            self.ui_window.statusBar.showMessage('Не могу прочитать файл!')
+
+        # self.config.read(self.config_file_name, encoding="utf-8")
+        # self.config_file_item = self.config.get(section, item)
 
 if __name__ == '__main__':
     # app = QApplication(sys.argv)

@@ -1,3 +1,4 @@
+import re
 import sys
 from PyQt5.QtWidgets import *
 
@@ -13,22 +14,34 @@ class WgConfig(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle('Генератор конфигурации')
         self.configmaker = ConfigMaker(self)
-        self.pushButton.clicked.connect(self.start)
+        self.pushButton_safe.clicked.connect(self.start)
+        self.pushButton_open.clicked.connect(self.configmaker.config_reader)
+
+        # self.statusBar.showMessage('sfsdfsdf')
+
 
     def start(self):
-        # [Interface]
-        self.ConfigName: str = self.lineEdit_config_name.text()
-        self.PrivateKey: str = self.lineEdit_PrivateKey.text()
-        self.Address: str = self.lineEdit_Address_1.text() + ', ' + self.lineEdit_Address_2.text()
-        self.DNS: str = self.lineEdit_DNS.text()
-        # # [Peer]
-        self.PublicKey: str = self.lineEdit_PublicKey.text()
-        self.AllowedIPs: str = self.lineEdit_AllowedIPs.text()
-        self.Endpoint: str = self.lineEdit_Endpoint.text()
-        if self.ConfigName and self.PrivateKey and self.lineEdit_Address_1.text() and self.DNS and self.PublicKey and self.AllowedIPs and self.Endpoint :
+        name_list_required = ['PrivateKey', 'Address', 'DNS', 'PublicKey', 'AllowedIPs', 'Endpoint']
+        flag_good = True
+        name_list_dict = {}
+        name_list_full = self.__dict__.keys()
+        pattern = r'(^lineEdit)_(\w+)'
+        for item in name_list_full:
+            item_chose = re.match(pattern, item)
+            if item_chose:
+                name_list_dict[item_chose.group(2)] = getattr(self, item_chose.group(0)).text()
+
+        for name in name_list_required:
+            if not name_list_dict[name]:
+                QMessageBox.critical(self, 'Ошибка', f'Заполните поле {name}!')
+                flag_good = False
+                break
+        if flag_good:
+            self.name_list_dict = name_list_dict
             self.configmaker.config_maker()
-        else:
-            QMessageBox.critical(self, 'Ошибка', f'Заполните все поля!')
+
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
