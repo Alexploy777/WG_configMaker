@@ -1,10 +1,10 @@
 import re
 import sys
+
 from PyQt5.QtWidgets import *
 
-from gui import Ui_MainWindow
 from config_maker_class import ConfigMaker
-
+from gui import Ui_MainWindow
 
 
 class WgConfig(QMainWindow, Ui_MainWindow):
@@ -16,9 +16,6 @@ class WgConfig(QMainWindow, Ui_MainWindow):
         self.configmaker = ConfigMaker(self)
         self.pushButton_safe.clicked.connect(self.start)
         self.pushButton_open.clicked.connect(self.configmaker.config_reader)
-
-        # self.statusBar.showMessage('sfsdfsdf')
-
 
     def start(self):
         name_list_required = ['PrivateKey', 'Address', 'DNS', 'PublicKey', 'AllowedIPs', 'Endpoint']
@@ -39,8 +36,6 @@ class WgConfig(QMainWindow, Ui_MainWindow):
         if flag_good:
             self.name_list_dict = name_list_dict
             self.configmaker.config_maker()
-
-
 
 
 if __name__ == '__main__':
